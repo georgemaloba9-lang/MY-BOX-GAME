@@ -15,7 +15,7 @@ jobs:
           java-version: 21
       - name: Préparer l'application
         run: |
-          unzip -q MY-BOX-GAME.zip
+          unzip -q MY-BOX-GAME-4.zip
           mkdir -p www
           cp -r MY-BOX-GAME/index.html MY-BOX-GAME/sw.js MY-BOX-GAME/manifest.json MY-BOX-GAME/assets MY-BOX-GAME/pages www/
           mkdir -p /tmp/eng && cd /tmp/eng && npm pack @thenick775/mgba-wasm@2.3.3 --silent && tar xzf ./*.tgz && cd -
