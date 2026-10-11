@@ -1,0 +1,32 @@
+name: Publier sur GitHub Pages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Préparer le site
+        run: |
+          unzip -q "$(ls *.zip | head -1)"
+          mkdir -p www
+          cp -r MY-BOX-GAME/index.html MY-BOX-GAME/sw.js MY-BOX-GAME/manifest.json MY-BOX-GAME/assets MY-BOX-GAME/pages www/
+          mkdir -p /tmp/eng && cd /tmp/eng && npm pack @thenick775/mgba-wasm@2.3.3 --silent && tar xzf ./*.tgz && cd -
+          cp /tmp/eng/package/dist/mgba.js /tmp/eng/package/dist/mgba.wasm www/assets/vendor/emulator/
+          cp /tmp/eng/package/LICENSE* www/assets/vendor/emulator/ || true
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: www
+      - id: deployment
+        uses: actions/deploy-pages@v4
